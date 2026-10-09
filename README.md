@@ -10,7 +10,7 @@ T113-s3 KelpBar 开发板嵌入式学习项目。**每个考核节点一个独�
 | ② | LED + 按键 | ✅ | [`02-led-key`](../02-led-key) | GPIO 子系统 / PD11,PD10 / evdev |
 | ③ | 触摸 | ✅ | [`03-touch`](../03-touch) | GT9xx / TWI1 / PE0,PE1 / 0x5D |
 | ④ | 显示 | ✅ | [`04-display`](../04-display) | FL7707N MIPI DSI / 720×1424 / rc.local 持久化 |
-| ⑤ | 喇叭 | ⬜ | `05-speaker` | tinyplay / HPOUT |
+| ⑤ | 喇叭 | ⏳ 软件侧✅ | [`05-speaker`](../05-speaker) | LM4871 功放 / PA_SHDN=PB2 / aplay |
 | ⑥ | MIC | ⬜ | `06-mic` | tinycap / MIC3 |
 | ⑦ | WiFi | ⬜ | `07-wifi` | RTL8723DS SDIO |
 | ⑧ | BT | ⬜ | `08-bt` | MX-02 模组 |
