@@ -77,21 +77,43 @@ boot0(闭源) → U-Boot(可改/重编) → Kernel+设备树(可改/重编) → 
 
 > 镜像文件较大，未入 git。分发用 GitHub Release 或网盘。
 
-## 关于 GitHub 推送
+## 关于 GitHub 推送（★ 只差一步）
 
-各仓库已 `git init` 并完成首次 commit，但**尚未配置远程仓库**。
+**已完成**：
+- ✅ SSH 密钥已装好并验证（`Hi Karry-King-code!`）
+- ✅ 5 个仓库的 remote 已配好、分支已改 main、身份已配
+- ✅ gh CLI 已下载到 `C:\Users\XYT\ghtool\bin\gh.exe`
 
-推送步骤（需要你的 GitHub 账号）：
+**只差**：在 GitHub 上**创建 5 个空仓库**（SSH 密钥只能推送，不能建仓库，这是 GitHub 的设计限制）。
 
+### 方案A：网页建仓库（2 分钟，推荐）
+
+1. 浏览器打开 https://github.com/new
+2. 依次创建这 5 个（**三个勾全部不要勾！**）：
+   - `t113-serial`
+   - `t113-led-key`
+   - `t113-touch`
+   - `t113-display`
+   - `t113-overview`
+3. 建完在 Git Bash 里执行：
+   ```sh
+   bash D:/t113_repos/push_all.sh
+   ```
+
+### 方案B：授权 gh CLI（一次授权，之后我全自动）
+
+在 Git Bash 里执行：
 ```sh
-cd D:\t113_repos\04-display          # 进入某个节点仓库
-git remote add origin https://github.com/<你的用户名>/t113-display.git
-git branch -M main
-git push -u origin main
+bash D:/t113_repos/gh_helper.sh auth
 ```
+按提示在浏览器里授权后，告诉我一声，我就能自动建仓库 + 推送。
 
-> **建议**：4 个节点各建一个 repo（`t113-serial` / `t113-led-key` / `t113-touch` / `t113-display`），
-> 符合你说的"串口是一个代码工程，触摸也是一个，分开切独立的"。
+---
+
+## 新会话怎么继续
+
+看 [`新会话启动提示词.md`](新会话启动提示词.md) —— 复制里面的内容给新会话的 AI 即可，
+**不需要重新喂养任何资料**。
 
 ---
 *最后更新：2026-10-09*
