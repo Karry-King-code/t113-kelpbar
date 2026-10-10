@@ -12,7 +12,7 @@ T113-s3 KelpBar 开发板嵌入式学习项目。**每个考核节点一个独�
 | ④ | 显示 | ✅ | [`04-display`](../04-display) | FL7707N MIPI DSI / 720×1424 / rc.local 持久化 |
 | ⑤ | 喇叭 | ✅ | [`05-speaker`](../05-speaker) | LM4871 功放 / PA_SHDN=PB2(**低=工作**) / aplay+madplay(MP3) |
 | ⑥ | MIC | ⏳ 软件已验证 | [`06-mic`](../06-mic) | arecord / 板载GMI4015P / MIC3 |
-| ⑦ | WiFi | ⬜ | `07-wifi` | RTL8723DS SDIO |
+| ⑦ | WiFi | ✅ | [`07-wifi`](../07-wifi) | RTL8723DS 驱动换装 / KernelPackage 机制 / wpa_cli |
 | ⑧ | BT | ⬜ | `08-bt` | MX-02 模组 |
 | ⑨ | LVGL8/9 | ⬜ | `09-lvgl` | app_sdk_v2 |
 
