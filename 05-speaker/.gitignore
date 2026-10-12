@@ -1,0 +1,6 @@
+*.img
+*.bin
+logs/*.log
+!logs/.gitkeep
+Thumbs.db
+.DS_Store

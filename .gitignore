@@ -1,6 +1,6 @@
 *.img
 *.bin
+*.log
 Thumbs.db
 .DS_Store
-05-speaker/
-06-mic/
+*.bak-*

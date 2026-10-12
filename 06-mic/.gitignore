@@ -1,0 +1,5 @@
+*.img
+*.bin
+logs/*.wav
+!logs/.gitkeep
+Thumbs.db
