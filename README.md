@@ -18,7 +18,7 @@
 | 5 | **喇叭** ✅ | [05-speaker/README.md](05-speaker/README.md) | LM4871 功放 / aplay+madplay(MP3) |
 | 6 | **麦克风** ✅ | [06-mic/README.md](06-mic/README.md) | 板载驻极体麦 / arecord |
 | 7 | **WiFi** ✅ | [07-wifi/README.md](07-wifi/README.md) | RTL8723DS 驱动换装 / wpa_cli |
-| 8 | **蓝牙** 🔧 | 09-lvgl 前完成 | RTL8723DS BT / UART1 H5 |
+| 8 | **蓝牙** 🔧 攻坚中 | [08-bt/README.md](08-bt/README.md) | RTL8723DS BT / UART1 H5 / rtk_hciattach |
 | 9 | **LVGL** ⏸ | 等屏幕配件 | app_sdk_v2 |
 
 > **串口是地基**：所有后续节点的诊断都靠它。请从 1 开始按顺序做。

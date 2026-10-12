@@ -1,0 +1,114 @@
+Realtek Bluetooth init uart with init speed:115200, final_speed:115200, type:HCI UART H5
+Realtek Bluetooth :Realtek hciattach version 3.1 
+
+Realtek Bluetooth :3-wire sync pattern resend : 1, len: 8
+
+Realtek Bluetooth :Get SYNC Resp Pkt
+
+Realtek Bluetooth :Get SYNC pkt-active mode
+
+Realtek Bluetooth :3-wire config pattern resend : 1 , len: 10
+Realtek Bluetooth :Get CONFG pkt-active mode
+
+Realtek Bluetooth :Get CONFG resp pkt-active mode
+
+Realtek Bluetooth :H5 init finished
+
+Realtek Bluetooth :RTK send HCI_VENDOR_READ_RTK_ROM_VERISION_Command
+
+Realtek Bluetooth :Received reliable seqno 0 from card
+Realtek Bluetooth :receive hci command complete event with command:1001
+
+Realtek Bluetooth :Read Local Version Information with Status:0
+Realtek Bluetooth :HCI Version 0x08
+Realtek Bluetooth :HCI Revision 0x000d
+Realtek Bluetooth :LMP Subversion 0x8723
+Realtek Bluetooth :RTK send HCI_VENDOR_READ_RTK_ROM_VERISION_Command
+
+Realtek Bluetooth :Received reliable seqno 1 from card
+Realtek Bluetooth :receive hci command complete event with command:fc6d
+
+Realtek Bluetooth :Read RTK rom version with Status:0
+Realtek Bluetooth :LMP Subversion 0x8723
+Realtek Bluetooth :EVersion 2
+Realtek Bluetooth :IC: RTL8723DS
+
+Realtek Bluetooth :Firmware/config: rtl8723d_fw, rtl8723d_config
+
+Realtek Bluetooth :config baud rate to :4928002, hwflowcontrol:5f, 1
+Realtek Bluetooth :config offset(00d9),length(01)
+Realtek Bluetooth :config offset(00e4),length(01)
+Realtek Bluetooth :config offset(008d),length(01)
+Realtek Bluetooth :config offset(008f),length(01)
+Realtek Bluetooth :Get config baud rate from config file:4928002
+Realtek Bluetooth :Load FW OK
+Realtek Bluetooth :rtk_get_fw_project_id: opcode 0, len 1, data 9
+Realtek Bluetooth :fw_ver 0xbab76f72, patch_num 3
+Realtek Bluetooth :chip id 0x0001
+Realtek Bluetooth :chip id 0x0002
+Realtek Bluetooth :chip id 0x0003
+Realtek Bluetooth :patch length is 0x9be8
+Realtek Bluetooth :start offset is 0x4980
+Realtek Bluetooth :Svn version: 316555887
+
+Realtek Bluetooth :Coexistence: BTCOEX_20210106-3b3b
+
+Realtek Bluetooth :fw: exists, config file: exists
+Realtek Bluetooth :Total len 39953 for fw/config
+Realtek Bluetooth :baudrate in change speed command: 0x2 0x80 0x92 0x4 
+
+Realtek Bluetooth :Received reliable seqno 2 from card
+Realtek Bluetooth :receive hci command complete event with command:fc17
+
+Realtek Bluetooth :Change BD Rate with status:0
+Realtek Bluetooth :final_speed 1500000
+
+Realtek Bluetooth :hw flow control enable
+Realtek Bluetooth :iEndIndex:158  iLastPacketLen:137 iAdditionpkt:6
+
+Realtek Bluetooth :hci_download_patch tx_index:0 rx_index: -1
+
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:0
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:1
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:2
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:3
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:4
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:5
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:6
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:7
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:8
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:9
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:10
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:11
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:12
+Realtek Bluetooth ERROR: patch timerout, retry:
+
+Realtek Bluetooth :3-wire download patch re send:13
+Realtek Bluetooth ERROR: patch timerout, retry:
+
