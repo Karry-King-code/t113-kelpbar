@@ -47,8 +47,27 @@ echo 1 > /sys/class/disp/disp/attr/colorbar
 # ---------- 蓝牙开机自启 ----------
 # RTL8723DS 蓝牙: UART1(ttyS1) H5 协议 + 固件下载
 # 注意: 固件下载需要芯片处于冷启动状态, 所以放开机脚本里最合适
-if [ -x /root/bt_up.sh ]; then
-    sh /root/bt_up.sh > /tmp/bt_boot.log 2>&1 &
+# bt_up.sh 内部还会: 起 bluetoothd -C、配置可发现/免密配对、
+# 把 SPP 串口服务注册到 SDP 通道 3
+# 脚本随固件打包在 /etc 下(烧录后自动就有), 所以优先用 /etc/; /root/ 是手动位置
+BTUP=/etc/bt_up.sh
+[ -x "$BTUP" ] || BTUP=/root/bt_up.sh
+if [ -x "$BTUP" ]; then
+    sh "$BTUP" > /tmp/bt_boot.log 2>&1 &
+fi
+
+# ---------- 蓝牙 SPP 串口服务(业务演示) ----------
+# 电脑/手机连上后, 板子会主动问好, 并把收到的每一行回显回去
+# 参数 auto = 自己挑一个没被占用的 /dev/rfcommN
+# (被 kill 过的 rfcomm 会残留内核占位, 用固定编号会报 Address already in use)
+# 用 start-stop-daemon -b 脱离 rc.local 进程组, 避免随初始化脚本结束一起被杀
+SPPD=/etc/spp_demo2.sh
+[ -x "$SPPD" ] || SPPD=/root/spp_demo2.sh
+if [ -x "$SPPD" ]; then
+    # 清掉可能残留的 pidfile: 否则 start-stop-daemon 会以为"已在运行"而拒绝启动
+    rm -f /var/run/spp.pid
+    start-stop-daemon -S -b -m -p /var/run/spp.pid \
+        -x /bin/sh -- "$SPPD" auto 3
 fi
 
 exit 0

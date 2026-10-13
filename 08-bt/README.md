@@ -160,35 +160,167 @@ hciconfig hci0 piscan            # 可发现+可连接
 
 ---
 
-*文档版本：v2.0（已完成） ｜ 2026-10-12 ｜ 验证：手机 + 电脑双配对成功*
-
+*文档版本：v2.1（已完成） ｜ 2026-10-13 ｜ 验证：手机 + 电脑双配对成功 + SPP 蓝牙串口业务实测双向通信通过*
 
 ---
 
-## 附录：蓝牙「业务」服务（手机显示已连接的关键）
+## 附录 A：蓝牙「业务」——SPP 蓝牙串口（已实测通过 ✅ 2026-10-13）
 
-配对只是建立信任；要让手机显示**已连接**并真的用起来，板子需要提供**蓝牙服务（profile）**。
+**一句话**：板子对外提供一个「蓝牙串口」服务；电脑/手机连上后，板子先问好，然后**你发什么它回什么**。
+这就是导师要的「业务」——不是只配对成功，而是真的在传数据。
 
-### 服务一：A2DP Sink（蓝牙音箱）★ 推荐
+实测记录（电脑端）：
 
-让板子变成蓝牙音箱 —— 手机连上后放音乐从板子喇叭出。
+```
+BOARD > *** T113-KelpBar BT SPP connected ***
+BOARD > T113: echo server ready, send any line
+PC    > HELLO_FROM_WINDOWS_PC
+BOARD > T113-Echo: HELLO_FROM_WINDOWS_PC
+=== SPP BIDIRECTIONAL BUSINESS VERIFIED (PC -> board -> PC) ===
+```
 
+板子端同时记录（`/tmp/spp_events.log`）：
 
+```
+=== spp_demo2 start ... dev=/dev/rfcomm1 ch=3 ===
+CONNECTED ...
+RX: HELLO_FROM_WINDOWS_PC
+DISCONNECTED ...
+```
 
-**注册后的 SDP 记录**（ 验证）：
+---
 
+### A0. 前置条件（每一条都要成立）
 
-**手机操作**：蓝牙设置 → 点  旁的设置图标 → 打开「**媒体音频**」→ 手机自动连接并显示**已连接**。
+| 条件 | 怎么查 | 期望结果 |
+|---|---|---|
+| hci0 起来了 | `hciconfig hci0` | `UP RUNNING PSCAN ISCAN`，BD Address `34:75:63:48:4A:AD` |
+| 设备类别已设 | `hciconfig hci0` 里的 `Class` | `0x000104`（不设的话安卓/Windows 搜不到） |
+| bluetoothd 带 -C 在跑 | `ps w \| grep bluetoothd` | 有 `bluetoothd -n -C` |
+| SDP 里有串口服务 | `sdptool browse local` | 出现 `Serial Port` + `Channel: 3` |
+| 服务在监听 | `cat /tmp/spp_events.log` | 有 `spp_demo2 start ... ch=3` |
 
-### 服务二：SPP（蓝牙串口）
+---
 
-板子提供蓝牙串口，收到什么回显什么。
+### A1. 板子端：手动跑一遍
 
+```sh
+# 第 1 步：把蓝牙拉起来（固件下载 + 免密可配对 + 注册 SPP 通道3）
+sh /root/bt_up.sh
 
+# 第 2 步：起 SPP 串口服务
+#   auto = 自己挑一个没被占用的 /dev/rfcommN（原因见 A5-1）
+#   3    = 监听通道 3（要和 sdptool 注册的一致）
+sh /root/spp_demo2.sh auto 3 &
+```
 
-**提示**： 必须以 **（compat）** 启动，否则  socket 不存在，sdptool 报错
-。
+看到 `/tmp/spp_events.log` 里出现 `spp_demo2 start ... dev=/dev/rfcommN ch=3` 就是**待命中**，等对方来连。
 
-### 完整服务启动（含业务）
+> 注意：`sh /root/spp_demo2.sh auto 3` 会一直前台跑（这是正常的，它在等连接）。
+> 嫌占终端就 `sh /root/spp_demo2.sh auto 3 > /tmp/spp_boot.log 2>&1 &` 丢后台。
 
+---
 
+### A2. 电脑端连接（Windows）
+
+**先找到「出方向」的串口**。Windows 跟板子配对后会自动建两个蓝牙串口，一个进一个出：
+
+```powershell
+Get-PnpDevice -Class Ports | Where-Object { $_.InstanceId -like '*BTHENUM*' } |
+    Select-Object FriendlyName, InstanceId | Format-List
+```
+
+- `InstanceId` 里带 `_LOCALMFG&0000` 的 = **本机自己的入口，别用**
+- `InstanceId` 里带 `347563484AAD` 的（就是板子蓝牙地址）= **连到板子的出口，用这个**
+
+实测这台电脑是：入口 COM8、出口 **COM9**。
+
+**方式一（推荐）：跑现成脚本** `patches/spp_pc_test.ps1`
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "D:\t113_work\spp_pc_test.ps1"
+```
+
+出现 `=== SPP BIDIRECTIONAL BUSINESS VERIFIED (PC -> board -> PC) ===` 就成功了。
+
+**方式二：随便一个串口工具**
+PuTTY / 串口调试助手 → 打开 COM9 → **115200 8N1** → 发送 `HELLO`，应收到 `T113-Echo: HELLO`。
+
+---
+
+### A3. 手机端连接
+
+装任意「蓝牙串口终端」App（例如 Serial Bluetooth Terminal / SPP Terminal）→
+连接 `T113-KelpBar` → 应立刻看到两行问候 → 发一行，收到 `T113-Echo: 你发的内容`。
+
+---
+
+### A4. 开机自启（已经配好，重启不用敲命令）
+
+`/etc/rc.local` 末尾已写好两段：
+
+```sh
+BTUP=/etc/bt_up.sh
+[ -x "$BTUP" ] || BTUP=/root/bt_up.sh
+[ -x "$BTUP" ] && sh "$BTUP" > /tmp/bt_boot.log 2>&1 &
+
+SPPD=/etc/spp_demo2.sh
+[ -x "$SPPD" ] || SPPD=/root/spp_demo2.sh
+if [ -x "$SPPD" ]; then
+    rm -f /var/run/spp.pid
+    start-stop-daemon -S -b -m -p /var/run/spp.pid -x /bin/sh -- "$SPPD" auto 3
+fi
+```
+
+**自检方法**：重启板子 → 等 30 秒 → `cat /tmp/spp_events.log` 应看到 `spp_demo2 start ...`；
+`hciconfig hci0` 应是 `UP RUNNING PSCAN ISCAN`。都对了就直接从电脑/手机连。
+
+---
+
+### A5. 本次踩到的坑（按踩的顺序，一个都别跳）
+
+1. **`Can't create RFCOMM TTY: Address already in use`**
+   元凶：被 `kill` 过的 `rfcomm` 进程会在**内核里留下 dev 占位**（蓝屏一样清不掉）。
+   判断：`ls /sys/class/tty | grep rfcomm`，如果出现 `rfcomm0` 而你并没有在用，就是被占了。
+   解法：① 用 `auto` 参数自动跳过被占用的编号（本脚本已默认这么做）；② 彻底清空要**重启板子**（内核态只在内存里，重烧/重启即恢复）。
+   **反面教材**：不要 `rm /dev/rfcomm0`——节点删了内核里的 dev 还在，只会更乱。
+
+2. **BlueZ 的 `rfcomm listen <dev> <ch> <cmd>` 钩子在本板不执行 cmd**
+   所以不能指望它连上后自动跑问候脚本，改用**两段式**：`rfcomm` 负责把 tty 建出来，另一个循环发现 tty 后收发。
+
+3. **板子上没有 `stty` 命令**
+   关 tty 回显只能用 `rfcomm` 自带的 `-r`（`--raw`）。不加的话，对方发的字节会被原样弹回去（还带 `^J` 这种控制符）。
+
+4. **`start-stop-daemon -S` 见到残留 pidfile 会拒绝启动**（报 `/bin/sh is already running`）
+   → 启动前先 `rm -f /var/run/spp.pid`。
+
+5. **`sdptool` 报 `Failed to connect to SDP server on FF:FF:FF:00:00:00`**
+   → `bluetoothd` 必须以 `-C`（compat 兼容模式）启动，否则 `/var/run/sdp` 这个 socket 不生成。
+
+6. **SDP 记录只存在 bluetoothd 的内存里**
+   → **每次开机都要重新 `sdptool add --channel=3 SP`**（已写进 `bt_up.sh`）。
+
+7. **Windows 的「出方向」COM 口是「配对那一刻」按 SDP 记录建的**
+   如果配对之后通道变了（我们中途从通道 1 换到通道 3），那个口就废了：表现为 `WriteLine 写入超时` 或 `WSAENETUNREACH(0x80072743)`。
+   → 解决办法：**删掉这个设备的配对，重新配对一次**。
+
+8. **adb 会话里 `&` 起的进程会随会话结束被杀**
+   → 板上要长期跑的服务，用 `start-stop-daemon -S -b` 脱离会话（`-b` = background）。
+
+---
+
+### A6. 文件清单（复刻照着摆）
+
+| 文件 | 放到板子哪里 | 作用 |
+|---|---|---|
+| `patches/bt_up.sh` | `/root/bt_up.sh` 和 `/etc/bt_up.sh` | 一键起蓝牙：固件下载 + bluetoothd -C + 可发现/免密配对 + 注册 SPP 通道3 |
+| `patches/spp_demo2.sh` | `/root/spp_demo2.sh` 和 `/etc/spp_demo2.sh` | SPP 串口服务：问候 + 回显 |
+| `patches/rc_local_new4.sh` | `/etc/rc.local` | 开机自启（音频/喇叭/彩条/蓝牙/SPP 全在里面） |
+| `patches/spp_pc_test.ps1` | Windows 任意目录 | 电脑端验证脚本（打印双向通信证据） |
+
+烧进固件（重烧不丢）的位置：把前三个文件复制到 SDK 的
+`openwrt/target/t113/t113-evb1_auto_nand/base-files/etc/` 下（名字分别是 `bt_up.sh`、`spp_demo2.sh`、`rc.local`），再 `pack`。
+
+---
+
+*文档版本：v2.1（已完成） ｜ 2026-10-13 ｜ SPP 蓝牙串口业务实测双向通信通过*
