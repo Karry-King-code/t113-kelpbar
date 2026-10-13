@@ -1,0 +1,8 @@
+> HCI Event: IO Capability Response (0x32) plen 9         #24 [hci0] 964.341847
+        IO capability: DisplayYesNo (0x01)
+> HCI Event: IO Capability Request (0x31) plen 6          #25 [hci0] 964.344349
+< HCI Command: IO Capability Requ.. (0x01|0x002b) plen 9  #26 [hci0] 964.344422
+        IO capability: NoInputNoOutput (0x03)
+      IO Capability Request Reply (0x01|0x002b) ncmd 2
+> HCI Event: Simple Pairing Complete (0x36) plen 7        #32 [hci0] 964.892250
+> HCI Event: Link Key Notification (0x18) plen 23         #33 [hci0] 964.930999
