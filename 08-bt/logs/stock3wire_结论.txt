@@ -1,0 +1,7 @@
+[stock-3wire 试跑] hciattach -n -s 115200 ttyS1 3wire (内核ldisc路径, 干净状态):
+Device setup complete
+→ 但 /sys/class/bluetooth 空, hci0 未注册, hcitool: Device not available
+→ 内核 H5 serdev 探测路径在此内核/设备树组合下未完成 hci 注册
+[结论] 三条路径(用户态rtk_hciattach补丁下载/内核ldisc/官方fw对)全部验证,
+卡点收敛为: RTL8723DS 蓝牙在此板需要协议级调试(逻辑分析仪抓 PG6/PG7)
+或 deeper kernel 调试, 超出当前会话预算。
