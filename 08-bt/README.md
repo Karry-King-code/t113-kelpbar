@@ -359,6 +359,38 @@ fi
 
 **电脑（Windows）同理**：配对后 设置 → 蓝牙 里也会显示「已连接」；把 `T113-KelpBar` 选成声音输出设备即可往里放歌。
 
+### B1.5 ★ 手机"有媒体音频开关、但只是已保存、连不上"怎么办
+
+板上 `bluetoothd` 日志会明说是这个原因：
+
+```
+Endpoint registered: /org/bluez/hci0/A2DP/SBC/sink/1      ← 音箱服务本身没问题
+Authentication attempt without agent
+Access denied: org.bluez.Error.Rejected                   ← 被拒
+Browsing: Refusing unexpected connect
+```
+
+**原因**：板子上没有配对 agent。手机来连接时 bluetoothd 要找人确认这次鉴权，没人 = 直接拒。
+**音频(A2DP)必须鉴权**，所以被拒；而串口(SPP)因为 rfcomm 监听没要求鉴权，所以之前照样能连——
+这就是"串口能用、音频连不上"的根源。
+
+**根因还有一层**：板子的配对记录目录 `/var/lib/bluetooth/` 不存在，
+说明之前那次配对是 `btmgmt` 在内核层做的（密钥只在芯片里），bluetoothd 根本不知道，
+重新下载固件后连芯片里的也没了。**所以手机必须重新配对一次**，让密钥经 bluetoothd 落到
+`/var/lib/bluetooth/`（在 overlay 可写分区上，重启不丢）。
+
+**修复（板上）**：`bt_agent.sh` 已随开机自启（`bt_up.sh` 第 3 步），它做的就是：
+
+```sh
+{ printf 'agent NoInputNoOutput\ndefault-agent\npairable on\ndiscoverable on\n'; \
+  while true; do sleep 3600; done; } | bluetoothctl
+```
+
+（那两句 `sleep` 是为了占住管道读端——bluetoothctl 一退出，agent 注册就没了。）
+
+**手机侧操作**：忘记/取消配对 `T113-KelpBar` → 重新搜索并配对（不用输配对码，秒配）
+→ 打开「媒体音频」→ 这次应显示「已连接」→ 放歌。
+
 ### B2. 板上这条通路的进程
 
 ```sh

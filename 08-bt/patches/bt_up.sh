@@ -50,6 +50,23 @@ while [ ! -S /var/run/sdp ] && [ $i -lt 20 ]; do
 done
 if [ -S /var/run/sdp ]; then echo "SDP socket 就绪"; else echo "SDP socket 未出现(sdptool 可能失败)"; fi
 
+# 配对 agent: 没有它, 对方回来连接时 bluetoothd 会报
+#   "Authentication attempt without agent / Access denied: org.bluez.Error.Rejected"
+# 直接把连接拒掉。音频(A2DP)必须鉴权, 所以这个是"手机连上放音乐"的前提。
+# (串口之所以之前能连, 是因为 rfcomm 监听没要求鉴权)
+if ps w | grep '[b]luetoothctl' > /dev/null; then
+    echo "配对 agent 已在运行"
+else
+    rm -f /var/run/btagent.pid
+    start-stop-daemon -S -b -m -p /var/run/btagent.pid -x /bin/sh -- /etc/bt_agent.sh
+    sleep 2
+    if ps w | grep '[b]luetoothctl' > /dev/null; then
+        echo "已启动配对 agent"
+    else
+        echo "*** agent 启动失败, 看 /tmp/bt_agent.log ***"
+    fi
+fi
+
 step "[4/6] 配置(可发现 + 可配对 + 免密)"
 btmgmt power on          2>&1 | tail -1
 # ssp on + io-cap 3 = 免输入配对码, 否则会和旧配对记录打架报"配对码不匹配"
