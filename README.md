@@ -1,7 +1,7 @@
 # T113 KelpBar 嵌入式全流程学习（全志 T113-S3）
 
 从零开始，在一块全志 T113-S3 开发板上完成 7 项外设bring-up：
-**调试串口 → LED/按键 → 触摸 → 屏幕显示 → 喇叭 → 麦克风 → WiFi**。
+**调试串口 → LED/按键 → 触摸 → 屏幕显示 → 喇叭 → 麦克风 → WiFi → 蓝牙（串口回显 + 手机连上放音乐）→ LVGL**。
 
 每个节点都有一份**小白可无脑跟做**的复刻手册：硬件事实、逐条命令、每步验证、踩坑档案。
 
@@ -18,10 +18,16 @@
 | 5 | **喇叭** ✅ | [05-speaker/README.md](05-speaker/README.md) | LM4871 功放 / aplay+madplay(MP3) |
 | 6 | **麦克风** ✅ | [06-mic/README.md](06-mic/README.md) | 板载驻极体麦 / arecord |
 | 7 | **WiFi** ✅ | [07-wifi/README.md](07-wifi/README.md) | RTL8723DS 驱动换装 / wpa_cli |
-| 8 | **蓝牙** 🔧 攻坚中 | [08-bt/README.md](08-bt/README.md) | RTL8723DS BT / UART1 H5 / rtk_hciattach |
-| 9 | **LVGL** ⏸ | 等屏幕配件 | app_sdk_v2 |
+| 8 | **蓝牙** ✅ | [08-bt/README.md](08-bt/README.md) | RTL8723DS BT / UART1 H5 / rtk_hciattach / SPP 串口回显 + A2DP 蓝牙音箱 |
+| 8.5 | **蓝牙播音乐**（手机连板子放歌）| [08-bt/README.md](08-bt/README.md) 附录 B | 手机 --A2DP--> bluealsa --> audiocodec --> LM4871 --> 喇叭；**不依赖屏幕，排在 ⑨ 之前** |
+| 9 | **LVGL** ⏸ 等屏幕配件 | 等屏幕配件 | app_sdk_v2；**必须先换屏（FL7707 720×1424 MIPI 4lane），硬件卡住，所以排最后** |
 
 > **串口是地基**：所有后续节点的诊断都靠它。请从 1 开始按顺序做。
+>
+> **关于「蓝牙播音乐」和「LVGL」谁先**：蓝牙播音乐 = 第 5 项（喇叭）＋ 第 8 项（蓝牙）的收尾，
+> 它的链路是 `手机 → A2DP → bluealsa → 声卡(audiocodec) → HPOUT → LM4871 功放 → CN2 喇叭座`，
+> **每个环节都不经过屏幕**，所以现在就能做；板子上 `bluealsa` 已随开机自启跑起来了（见 08-bt 附录 B）。
+> 而 ⑨ LVGL 是把界面画到屏幕上，**必须先有能亮的屏**，所以它是被硬件卡住的最后一项。
 
 ---
 
