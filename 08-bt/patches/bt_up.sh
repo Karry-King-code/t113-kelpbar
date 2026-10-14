@@ -88,7 +88,8 @@ step "[5/6] 启动蓝牙音箱服务 A2DP Sink (手机显示'已连接'靠它)"
 if ps w | grep '[b]luealsa ' > /dev/null; then
     echo "bluealsa 已在运行"
 else
-    bluealsa -p a2dp-sink --a2dp-volume -i hci0 > /tmp/bluealsa.log 2>&1 &
+    # force-mono + low: 把码率压到 115200 串口管道装得下的水平(流畅优先, 音质打折)
+    bluealsa -p a2dp-sink --a2dp-volume -i hci0 --a2dp-force-mono --sbc-quality=low > /tmp/bluealsa.log 2>&1 &
     echo "已启动 bluealsa -p a2dp-sink"
 fi
 
