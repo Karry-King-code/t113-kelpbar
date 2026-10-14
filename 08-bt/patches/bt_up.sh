@@ -101,12 +101,30 @@ else
     echo "已启动 bluealsa-aplay (把收到的音频送到声卡)"
 fi
 
-step "[6/6] 注册 SPP 串口服务到 SDP(通道 3)"
+step "[6/6] 注册 SDP 服务记录(每次开机都要重新注册)"
 # SDP 记录只存在 bluetoothd 内存里, 每次开机都要重新注册
-# (A2DP / AVRCP 的记录由 bluealsa 自己注册, 不用管)
+# (A2DP/AVRCP 理论上由 bluealsa 端点注册时自动生成, 但实测会丢:
+#  手机配对时问"你是音频设备吗"得到空应答 -> 媒体音频开关不出现。
+#  所以这里把 Audio Sink 也显式补一条, 和 bluealsa 的端点共存没问题)
 sdptool del 0x10003 > /dev/null 2>&1
 sdptool add --channel=3 SP > /tmp/sdp.log 2>&1
-cat /tmp/sdp.log 2>/dev/null
+sdptool add A2SNK > /tmp/sdp2.log 2>&1
+cat /tmp/sdp.log /tmp/sdp2.log 2>/dev/null
+
+# 自检: 四条服务记录必须都在
+sleep 1
+echo "--- SDP 自检 ---"
+for svc in "Serial Port" "Audio Sink"; do
+    if sdptool browse local 2>&1 | grep -q "Service Name: $svc"; then
+        echo "  $svc: OK"
+    else
+        echo "  $svc: 丢失! 重试..."
+        [ "$svc" = "Serial Port" ] && sdptool add --channel=3 SP > /dev/null 2>&1
+        [ "$svc" = "Audio Sink" ] && sdptool add A2SNK > /dev/null 2>&1
+        sleep 1
+        sdptool browse local 2>&1 | grep -q "Service Name: $svc" && echo "  $svc: 补上了" || echo "  $svc: 仍然丢失!"
+    fi
+done
 
 echo
 echo "===== 最终状态 ====="
