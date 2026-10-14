@@ -20,7 +20,7 @@
 | 7 | **WiFi** ✅ | [07-wifi/README.md](07-wifi/README.md) | RTL8723DS 驱动换装 / wpa_cli |
 | 8 | **蓝牙** ✅ | [08-bt/README.md](08-bt/README.md) | RTL8723DS BT / UART1 H5 / rtk_hciattach / SPP 串口回显 + A2DP 蓝牙音箱 |
 | 8.5 | **蓝牙播音乐**（手机连板子放歌）| [08-bt/README.md](08-bt/README.md) 附录 B | 手机 --A2DP--> bluealsa --> audiocodec --> LM4871 --> 喇叭；**不依赖屏幕，排在 ⑨ 之前** |
-| 9 | **LVGL** ⏸ 等屏幕配件 | 等屏幕配件 | app_sdk_v2；**必须先换屏（FL7707 720×1424 MIPI 4lane），硬件卡住，所以排最后** |
+| 9 | **LVGL** 🟢 软件就绪 | [09-lvgl/README.md](09-lvgl/README.md) | LVGL 8.3.2（SDK 自带源码+工具链直编）/ fb0 渲染实锤 + 触摸 event5 接入；**换屏总成后插上即出画面**（无屏用 fb0 dump"云看屏"） |
 
 > **串口是地基**：所有后续节点的诊断都靠它。请从 1 开始按顺序做。
 >
