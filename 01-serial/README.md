@@ -184,15 +184,18 @@ grep -n "PB06\|PB07" sys_config.fex      # 验证
 >
 > **怎么知道该填几？查内核 C 表（最高权威）**：
 > ```sh
-> grep -n -A3 '"PB6"' ~/T113-Tina5.0-V1.2/.../drivers/pinctrl/sunxi/pinctrl-sun8iw20.c
+> grep -n -A8 'PINCTRL_PIN(B, 6)' \
+>   ~/T113-Tina5.0-V1.2/kernel/linux-5.4/drivers/pinctrl/sunxi/pinctrl-sun8iw20.c
 > ```
-> 看到 **PB6 的 function 0x7 = "uart3"** → 所以填 `<7>`。
+> ⚠️ **搜法注意**：C 表里引脚名是宏写法 `SUNXI_PINCTRL_PIN(B, 6)`（组名和脚号分开），
+> 直接搜 `"PB6"` 是搜不到的。
+> 看到 **PB6 的 `SUNXI_FUNCTION(0x7, "uart3")  /* TX */`** → 所以填 `<7>`。
 >
-> **交叉验证**：查 PG8 看到 `function 0x5 = "uart3"`，
+> **交叉验证**：查 `PINCTRL_PIN(G, 8)` 看到 `SUNXI_FUNCTION(0x5, "uart3")  /* TX */`，
 > 跟我们原来看到的 `<5>` 吻合 → **闭环，证明方法正确**。
 >
-> **教训**：**数据手册的 F 列 = 内核功能号 - 1**（不含 gpio 的 0/1），
-> 视觉读手册容易读错，**以内核 C 表为准**。
+> **规律**：**数据手册的 FunctionN 列 = 内核功能号 0xN**（PB6 手册 Function7=UART3-TX，
+> 内核 `0x7="uart3"`，一一对应）——但**以内核 C 表为准**，设备树填的就是内核功能号。
 
 #### 改动③：`board.dts`
 
@@ -448,7 +451,7 @@ D:\t113_work\flash_tools\adb.exe shell
 | 内核启动参数 | `<CFG>/openwrt/env.cfg` |
 | 引导期串口 | `<CFG>/sys_config.fex` |
 | 内核期引脚 | `<CFG>/linux-5.4/board.dts`（真身） |
-| 引脚功能 C 表 | `~/T113-Tina5.0-V1.2/.../drivers/pinctrl/sunxi/pinctrl-sun8iw20.c` |
+| 引脚功能 C 表 | `~/T113-Tina5.0-V1.2/kernel/linux-5.4/drivers/pinctrl/sunxi/pinctrl-sun8iw20.c` |
 | 镜像 | `~/T113-Tina5.0-V1.2/out/t113_linux_evb1_auto_nand_uart0.img` |
 
 > `<CFG>` = `~/T113-Tina5.0-V1.2/device/config/chips/t113/configs/evb1_auto_nand`

@@ -145,7 +145,9 @@ board.dts 里 twi1_pins_a / twi1_pins_b 的 pins = "PE14", "PE15"   ← 板级�
 **核实内核 C 表**（最高权威）：
 
 ```sh
-grep -n -A3 '"PE0"\|"PE1"' ~/T113-Tina5.0-V1.2/.../drivers/pinctrl/sunxi/pinctrl-sun8iw20.c
+# C 表引脚名是宏写法 PINCTRL_PIN(组, 脚)，搜 "PE0" 搜不到
+grep -n -A8 'PINCTRL_PIN(E, 0)' ~/T113-Tina5.0-V1.2/kernel/linux-5.4/drivers/pinctrl/sunxi/pinctrl-sun8iw20.c   # 0x4 = "twi1" /* SCK */
+grep -n -A8 'PINCTRL_PIN(E, 1)' ~/T113-Tina5.0-V1.2/kernel/linux-5.4/drivers/pinctrl/sunxi/pinctrl-sun8iw20.c   # 0x4 = "twi1" /* SDA */
 ```
 
 看到 PE0/PE1 的 **function 4 = "twi1"**（SCK/SDA）。
@@ -349,9 +351,9 @@ A：它返回**整棵设备树里第一个**名字匹配的节点（忽略 `@` �
 | 用途 | 路径 |
 |---|---|
 | 设备树真身 | `~/T113-Tina5.0-V1.2/device/config/chips/t113/configs/evb1_auto_nand/linux-5.4/board.dts` |
-| 内核引脚 C 表 | `~/T113-Tina5.0-V1.2/.../drivers/pinctrl/sunxi/pinctrl-sun8iw20.c` |
-| 触摸驱动源码 | `~/T113-Tina5.0-V1.2/.../drivers/input/touchscreen/gt9xxnew/` |
-| 驱动配置读取 | `~/T113-Tina5.0-V1.2/.../drivers/input/init-input.c` |
+| 内核引脚 C 表 | `~/T113-Tina5.0-V1.2/kernel/linux-5.4/drivers/pinctrl/sunxi/pinctrl-sun8iw20.c` |
+| 触摸驱动源码 | `~/T113-Tina5.0-V1.2/kernel/linux-5.4/drivers/input/touchscreen/gt9xxnew/` |
+| 驱动配置读取 | `~/T113-Tina5.0-V1.2/kernel/linux-5.4/drivers/input/init-input.c` |
 | 镜像产物 | `~/T113-Tina5.0-V1.2/out/t113_linux_evb1_auto_nand_uart0.img` |
 
 ### 板子里
