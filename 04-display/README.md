@@ -51,7 +51,7 @@
 ### 彩条持久化的原理
 
 ```
-问题: echo 1 > /sys/.../colorbar 改的是【内核内存变量】→ 重启清零
+问题: echo 1 > /sys/class/disp/disp/attr/colorbar 改的是【内核内存变量】→ 重启清零
 解法: 写进 /etc/rc.local（开机最后一环 S95done 会调用它）
 验证: ls /overlay/upper/etc/rc.local  ← 存在 = 已落盘，重启不丢
 时序: disp 驱动 2.03s 就绪，rc.local 执行更晚 → 安全

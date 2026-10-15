@@ -377,7 +377,7 @@ gpio-107 (kelpbar:led1) out lo
 | # | 检查项 | 怎么验证 | 期望 |
 |---|---|---|---|
 | 1 | LED 设备注册 | `ls /sys/class/leds/` | 见 `kelpbar:led1` |
-| 2 | **LED 点亮** | `echo 255 > .../brightness` | **灯亮** |
+| 2 | **LED 点亮** | `echo 255 > /sys/class/leds/kelpbar:led1/brightness` | **灯亮** |
 | 3 | 按键设备注册 | `grep -A5 gpio /proc/bus/input/devices` | 见 `Name="gpio-keys"` + `event4` |
 | 4 | **按键有事件** | `cat /dev/input/event4` 后按 BTN1 | **刷出事件流** |
 | 5 | GPIO 状态正确 | `cat /sys/kernel/debug/gpio` | `IRQ ACTIVE LOW` |

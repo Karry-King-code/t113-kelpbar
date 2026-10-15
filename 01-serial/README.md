@@ -107,6 +107,32 @@
 
 ### 要改三处（★ 缺一不可）
 
+> ### ★ 先搞清楚"查哪里 → 去哪改"（新手最容易懵的地方，先看这段再动手）
+>
+> 这一关涉及 **4 个文件：1 个只查不改（字典），3 个要改（配置）**：
+>
+> | 文件 | 身份（是什么） | 查还是改 | 管哪个阶段 |
+> |---|---|---|---|
+> | `pinctrl-sun8iw20.c` | 内核 pinctrl 驱动源码 = **引脚功能"字典"**（每根脚有哪些功能、各占几号） | **只查，永远不改** | （参考书） |
+> | `openwrt/env.cfg` | 内核启动参数 | **要改** | 内核刚解压（earlycon 最早打印） |
+> | `sys_config.fex` | 全志私有**引导配置**（FEX 格式，不是设备树！） | **要改** | 引导期（boot0/U-Boot） |
+> | `board.dts` | **设备树**（Linux 标准硬件描述文件） | **要改** | 内核期 |
+>
+> **为什么"换个串口引脚"要改三个文件？** 板子启动分两段，两段各读一套配置：
+>
+> ```
+> 上电 → boot0 → U-Boot          ← 引导期：只认 sys_config.fex（全志私有格式）
+>               ↓ 交接
+>            Linux 内核 → shell    ← 内核期：只认 board.dts（设备树）
+> ```
+>
+> 串口要"从头到尾都有打印"，引导期和内核期**都得**把引脚配成 UART3——但两段读不同的
+> 文件，所以同一个"PG8/PG9 → PB6/PB7"要做两遍；env.cfg 是内核驱动加载前最早打印用的
+> 寄存器地址。**少改任何一处 = 日志断一段。**
+>
+> **功能号 `<7>` 怎么来的**：查那本"字典"（改动②里的 grep 命令）→ 查到 PB6 的
+> uart3 = 7 → 把 7 填进 fex 和 dts。**字典只读，落笔在配置。**
+
 三处配置分别在 SDK 的不同地方，管的**阶段不同**：
 
 | 文件 | 管哪个阶段 | 要改什么 |
@@ -448,13 +474,13 @@ D:\t113_work\flash_tools\adb.exe shell
 | 用途 | 路径 |
 |---|---|
 | SDK 根 | `~/T113-Tina5.0-V1.2` |
-| 内核启动参数 | `<CFG>/openwrt/env.cfg` |
-| 引导期串口 | `<CFG>/sys_config.fex` |
-| 内核期引脚 | `<CFG>/linux-5.4/board.dts`（真身） |
+| 内核启动参数 | `~/T113-Tina5.0-V1.2/device/config/chips/t113/configs/evb1_auto_nand/openwrt/env.cfg` |
+| 引导期串口 | `~/T113-Tina5.0-V1.2/device/config/chips/t113/configs/evb1_auto_nand/sys_config.fex` |
+| 内核期引脚 | `~/T113-Tina5.0-V1.2/device/config/chips/t113/configs/evb1_auto_nand/linux-5.4/board.dts`（真身） |
 | 引脚功能 C 表 | `~/T113-Tina5.0-V1.2/kernel/linux-5.4/drivers/pinctrl/sunxi/pinctrl-sun8iw20.c` |
 | 镜像 | `~/T113-Tina5.0-V1.2/out/t113_linux_evb1_auto_nand_uart0.img` |
 
-> `<CFG>` = `~/T113-Tina5.0-V1.2/device/config/chips/t113/configs/evb1_auto_nand`
+> 以上路径均已写全，可直接复制使用。
 
 ### Windows
 
