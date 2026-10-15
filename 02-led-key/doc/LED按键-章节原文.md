@@ -1,4 +1,4 @@
-## 【考核②】LED 点灯
+## 【LED/按键】LED 点灯
 
 ### 0. 目标一句话
 
@@ -51,7 +51,7 @@ grep -E 'NEW_LEDS|LEDS_CLASS|GPIO_SYSFS|LEDS_GPIO' config-5.4
 
 **原理**：设备树（dts）= "这块板上有什么硬件、接哪个脚"的说明书，内核启动时读它认硬件。LED 子系统只有在设备树看到 gpio-leds 节点才会创建 /sys/class/leds/xxx。
 
-**在哪改**：`~/T113-Tina5.0-V1.2/device/config/chips/t113/configs/evb1_auto_nand/linux-5.4/board.dts` —— **这是软链接指向的真身，必须改这里**（改软链接=白改，见考核①软链接陷阱）。
+**在哪改**：`~/T113-Tina5.0-V1.2/device/config/chips/t113/configs/evb1_auto_nand/linux-5.4/board.dts` —— **这是软链接指向的真身，必须改这里**（改软链接=白改，见串口软链接陷阱）。
 
 **怎么改**（在 linux-5.4 目录里）：
 ```bash
@@ -157,7 +157,7 @@ cat /sys/kernel/debug/gpio
 
 ---
 
-## 【考核③】按键
+## 【触摸】按键
 
 ### 0. 目标一句话
 
@@ -214,7 +214,7 @@ EOF
 **逐行解释**：
 - `compatible = "gpio-keys"`：钥匙——KEYBOARD_GPIO 驱动搜这个字符串
 - `gpios = <&pio 3 10 GPIO_ACTIVE_LOW>`：PD10（组3第10脚），**低电平=按下**（和第一步判断一致：按下接地变低）
-- `linux,code = <115>`：按下后上报什么"键值"。115=KEY_VOLUMEUP（音量+）。键值就是数字编号，内核有标准表（include/dt-bindings/input/linux-event-codes.h），考核只要求"能收到事件"，选哪个都行
+- `linux,code = <115>`：按下后上报什么"键值"。115=KEY_VOLUMEUP（音量+）。键值就是数字编号，内核有标准表（include/dt-bindings/input/linux-event-codes.h），关卡只要求"能收到事件"，选哪个都行
 - `wakeup-source`：能唤醒休眠（现在用不到，无害）
 - **不用写中断**：gpio-keys 驱动看到 gpios 属性会自动配成边沿中断输入——引脚方向、上拉、中断全由驱动代劳，这是"驱动代劳"和"手写寄存器"的区别
 

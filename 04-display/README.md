@@ -1,4 +1,4 @@
-# 考核④ 显示：八色彩条 + 复位自动恢复
+# 显示：八色彩条 + 复位自动恢复
 
 ## 状态：✅ 已完成（2026-10-09）
 
@@ -110,7 +110,7 @@ adb shell "cat /sys/class/disp/disp/attr/sys"
 
 ## 下一步
 
-考核⑤ 喇叭 —— **有利条件**：`/etc/rc.local` 里已有出厂预设的音频配置：
+喇叭 —— **有利条件**：`/etc/rc.local` 里已有出厂预设的音频配置：
 
 ```sh
 amixer cset name="HPOUT Switch" 1
@@ -119,7 +119,7 @@ amixer -Dhw:audiocodec cset name='MIC3 Switch' 1
 amixer -Dhw:audiocodec cset name='ADC3 Gain' 19
 ```
 
-**这四行同时是考核⑤（喇叭）和⑥（MIC）的开机配置，起点比显示这关平得多。**
+**这四行同时是喇叭（喇叭）和⑥（MIC）的开机配置，起点比显示这关平得多。**
 
 ---
 

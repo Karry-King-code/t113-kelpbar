@@ -1,4 +1,4 @@
-# 考核⑨ LVGL：无屏先行移植 —— 软件全就绪，等屏幕总成
+# LVGL：无屏先行移植 —— 软件全就绪，等屏幕总成
 
 > **目标**：LVGL 在板上跑起来（编译→部署→渲染→触摸接入全链路验证），换屏后插上就能看到画面。
 > **状态**：✅ **软件侧 100% 完成**（2026-10-14：widgets demo 渲染实锤 + 触摸通路接入 + 显示引擎发送端实测在跑）；⏸ **仅差屏幕总成硬件**（FL7707 720×1424 MIPI 4lane）。
@@ -30,7 +30,7 @@ mgr0: 720x1424 fmt[rgb] ... unblank          ← 显示控制器按 720×1424 �
 | # | 需要什么 | 怎么确认 | 没有/不对怎么办 |
 |---|---|---|---|
 | 1 | VM 能 SSH | `python D:\t113_work\ssh_run.py "uptime"` | 见踩坑 #1/#2（VM 卡死救援、密码认证） |
-| 2 | Tina SDK 在 VM | `ssh_run.py "ls ~/T113-Tina5.0-V1.2"` | 之前考核已就绪 |
+| 2 | Tina SDK 在 VM | `ssh_run.py "ls ~/T113-Tina5.0-V1.2"` | 之前关卡已就绪 |
 | 3 | 交叉工具链可用 | `ssh_run.py "ls ~/T113-Tina5.0-V1.2/openwrt/openwrt/staging_dir/toolchain/bin \| grep arm-openwrt-linux-gcc"` | 短名没有就 `ln -sf arm-openwrt-linux-gnueabi-gcc-8.3.0 arm-openwrt-linux-gcc`（bluealsa 配方） |
 | 4 | 板子 adb 连通 | `adb devices` → `20080411 device` | 查 USB 线/DEBUG 口 |
 | 5 | 知道三个终端的区别 | VM=编译 / Windows=adb / 板子=验证 | 见 01-serial 三窗口速查表 |
@@ -42,7 +42,7 @@ mgr0: 720x1424 fmt[rgb] ... unblank          ← 显示控制器按 720×1424 �
 | 项目 | 值 | 证据（命令） |
 |---|---|---|
 | 显存设备 | `/dev/fb0`，**32bpp**，virtual_size **720,2848**（1424×2=双缓冲） | `cat /sys/class/graphics/fb0/bits_per_pixel` / `virtual_size` → 实测 `32` / `720,2848` |
-| 分辨率 | 720×1424（FL7707 竖屏） | 考核④已配置并点亮过彩条 |
+| 分辨率 | 720×1424（FL7707 竖屏） | 显示已配置并点亮过彩条 |
 | 显示引擎实时状态 | fps:51.5、vsync 中断持续增长 | `cat /sys/class/disp/disp/attr/sys`（实测见第 0 部分） |
 | 触摸设备 | **`/dev/input/event5`**（Name=`gt9xxnew_ts`，input5） | `cat /proc/bus/input/devices`（板上 event0~6 共 7 个输入设备，GT9xx 是 event5） |
 | LVGL 版本 | **8.3.2**（库+移植层+模板三件套） | `lv_examples/Makefile` 里 `PKG_VERSION:=8.3.2` |
@@ -237,7 +237,7 @@ img.save('lvgl_fb_dump.png')
 | 1 | 驱动 IC 是 **FL7707**（或明确兼容） | dts 时序按它配的 |
 | 2 | 分辨率 **720×1424** | 错一个像素都不亮 |
 | 3 | **MIPI DSI 4 lane** | lane 数错=黑屏 |
-| 4 | 触摸芯片 **GT9 系列**（GT911 等） | 若换成其他 IC（如 FT 系列）需小改 dts 重编（考核③流程，可做但提前知道） |
+| 4 | 触摸芯片 **GT9 系列**（GT911 等） | 若换成其他 IC（如 FT 系列）需小改 dts 重编（触摸流程，可做但提前知道） |
 | 5 | 排线接口与旧屏同规格（发原理图 FPC 座页给卖家核对） | 纯硬件装配风险 |
 
 ### 8.2 点亮步骤（软件零改动）
@@ -254,7 +254,7 @@ img.save('lvgl_fb_dump.png')
 ```
 echo 1 > /sys/class/disp/disp/attr/colorbar     （发彩条）
 ├─ 彩条亮  → 显示硬件链路 OK；问题只在 LVGL → 回看第 6 关逐条查（不可能走到这，已实锤）
-└─ 彩条不亮 → 新屏适配/装配问题（时序、排线、供电），回考核④排查——与 LVGL 无关
+└─ 彩条不亮 → 新屏适配/装配问题（时序、排线、供电），回显示排查——与 LVGL 无关
 ```
 
 ## 9. 踩坑档案（本关实际发生的）

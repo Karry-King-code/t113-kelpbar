@@ -1,4 +1,4 @@
-# 考核⑤ 喇叭：播放音频 ✅ 已完成
+# 喇叭：播放音频 ✅ 已完成
 
 ## 两个固件版本
 
@@ -31,7 +31,7 @@ adb shell "madplay /root/audio/music_twinkle.mp3"    # MP3
 | 开机自动配置 | ✅ 已写入 `/etc/rc.local`，重启验证通过 |
 | **MP3 播放** | ✅ 已开启（v8 固件），实测 `308 frames decoded` |
 | 测试音频 | ✅ 已生成并放入板子 `/root/audio/` |
-| **听到声音** | ✅ **2026-10-10 用户确认有声音**（考核⑤盖章） |
+| **听到声音** | ✅ **2026-10-10 用户确认有声音**（喇叭盖章） |
 | 音乐循环播放 | ✅ 4首曲子循环（音乐-循环播放.bat） |
 
 ---
@@ -135,7 +135,7 @@ adb shell "madplay /root/audio/music_twinkle.mp3"   # MP3
 2. （如果还没烧 v8）烧录 `t113_v8_music.img`
 3. **双击** `D:	113_work\喇叭-播放测试.bat` → 听
 
-**听到声音 = 考核⑤完成。** 零命令、零粘贴。
+**听到声音 = 喇叭完成。** 零命令、零粘贴。
 
 > 开机后**约 30 秒**配置才自动就绪（音频子系统初始化慢），等一下再播。
 > 如果音频文件丢了（重新烧录后），跑 `bash patches/deploy_audio.sh` 重新部署。
@@ -159,7 +159,7 @@ adb shell "madplay /root/audio/music_twinkle.mp3"   # MP3
 
 ## 下一步
 
-考核⑥ MIC（录音回放）—— 好处：**共用同一张声卡**，
+MIC（录音回放）—— 好处：**共用同一张声卡**，
 `rc.local` 里已经配好 `MIC3 Input Select/Switch/ADC3 Gain` 了。
 
 ---
