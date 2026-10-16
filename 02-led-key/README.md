@@ -78,14 +78,14 @@ grep -nE 'GPIO_SYSFS|LEDS_GPIO|GPIO_KEYS|NEW_LEDS|LEDS_CLASS|KEYBOARD_GPIO' \
 | `CONFIG_LEDS_CLASS` | LED 类设备 | 中间层 |
 | `CONFIG_LEDS_GPIO` | GPIO 控制 LED 的驱动 | **LED 功能本体** |
 | `CONFIG_GPIO_SYSFS` | GPIO 的 sysfs 接口 | 用户态操作引脚 |
-| `CONFIG_GPIO_KEYS` | 按键的通用子系统 | 按键功能需要 |
+| `CONFIG_GPIO_KEYS` | （幽灵符号：内核源码里不存在此符号） | 写了被静默丢弃——无害也无效果（2026-10-16 源码查证） |
 | **`CONFIG_KEYBOARD_GPIO`** | **gpio-keys 驱动本体** | ★ **最容易漏的一个** |
 
-> ### ⚠️⚠️ `GPIO_KEYS` vs `KEYBOARD_GPIO` —— 名字陷阱
+> ### ⚠️⚠️ `GPIO_KEYS` vs `KEYBOARD_GPIO` —— 名字陷阱（2026-10-16 源码查证修正）
 >
-> 这两个名字**长得像，作用完全不同**：
-> - `CONFIG_GPIO_KEYS` = 子系统杂项
-> - `CONFIG_KEYBOARD_GPIO` = **驱动本体**
+> 当年的结论是"两个作用不同都要开"；查证内核源码后真相是：
+> - `CONFIG_GPIO_KEYS` = **内核里根本不存在的符号**（写入被静默丢弃，无害无效）
+> - `CONFIG_KEYBOARD_GPIO` = **驱动本体**，它只依赖 GPIOLIB——按键好不好只看它
 >
 > **只开前者不开后者 → dts 节点变成"没人认领的孤儿"，按键完全无反应。**
 >
